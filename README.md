@@ -46,11 +46,59 @@
 
 ### 3.2 键盘事件
 
+包含头文件QKeyEvent
 
+实现案例：获取键盘上的值，并显示在主窗口中的控件QLineEdit中
+
+（1）需要添加QLabel在主窗口中，设置文本为“键盘输入值”，同时添加一个QLineEdit型的文字显示框，用于将键盘上获取的值显示到窗口内，利用move函数将这两个控件的y轴坐标调成一致
+
+（2）重写keyPressEvent(QKeyEvent *event)和keyReleaseEvent(QKeyEvent *event)，
+
+一个是按下的时候即响应，一个是松开按键时响应
+
+（3）添加 “按下ctrl键获取鼠标坐标” 的事件，将其放入到keyPressEvent中实现
+
+（4）对于 键入键盘上其他按键 的事件，都放入到keyReleaseEvent中实现，无特殊含义的值一般保存为ascci码，使用event->key()来获取，该函数返回一个int类型的值，再利用QString函数转化为字符显示到控件中
+
+（5）由于某些含有特殊意义的按键，无法用ascii码表示，因此使用switch语句，将他们转化为和我们键盘上看到的值一样的值
+
+由于利用的key函数获取的键盘值不区分大小写，因此该界面也未实现区分大小的功能，所有键入值都会被当作为大写
+
+实现效果：
+
+<img src="C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163044672.png" alt="image-20230804163044672" style="zoom: 50%;" />![image-20230804163455290](C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163455290.png)<img src="C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163044672.png" alt="image-20230804163044672" style="zoom: 50%;" />![image-20230804163455290](C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163455290.png)
 
 ### 3.3 事件过滤器
 
+包含头文件QEvent
 
+```c++
+bool eventFilter（QObject * watched，QEvent  * event）;
+/*
+	创建过滤器
+	watched：触发事件的目标控件
+	event：触发的事件
+*/
+```
+
+如果想让当前控件处理该事件，则让事件返回true，不再分发到其他控件；如果不想处理该事件，则返回false，分发到基类处理
+
+对象只有安装了过滤器 installEventFilter() ，才能够使用过滤功能
+
+```c++
+void installEventFilter(QObject * filterObj);
+/*
+	filterObj:实现过滤器的部件
+	在部件上安装事件过滤器，一般在父控件上实现事件过滤器
+	且事件过滤器和安装过滤器的部件必须在同一线程中，否则过滤器将不起作用
+*/
+```
+
+案例：目前需要实现，对按钮进行鼠标点击操作时，打印出按钮需要过滤鼠标操作，当鼠标对主窗口进行操作时，打印出主窗口需要过滤鼠标操作
+
+（1）父控件是主窗口，因此需要在主窗口类中实现过滤器操作，也就是在主窗口类中重写eventFilter函数
+
+（2）主窗口和按钮都要进行事件过滤操作，因此都需要安装过滤器
 
 ## 四、信号与槽
 
