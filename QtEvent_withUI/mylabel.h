@@ -4,6 +4,7 @@
 #include <QLabel>
 #include<QWidget>
 #include<QMouseEvent>
+#include<QEvent>
 
 class myLabel : public QLabel
 {
@@ -25,6 +26,9 @@ public:
 
     // 鼠标移动事件
     void mouseMoveEvent(QMouseEvent *ev);
+
+    // 拦截鼠标事件
+    bool event(QEvent *e);
 
 signals:
 

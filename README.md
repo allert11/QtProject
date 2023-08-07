@@ -82,7 +82,35 @@
 
 <img src="C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163044672.png" alt="image-20230804163044672" style="zoom: 50%;" />![image-20230804163455290](C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163455290.png)<img src="C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163044672.png" alt="image-20230804163044672" style="zoom: 50%;" />![image-20230804163455290](C:\Users\jiafeng\AppData\Roaming\Typora\typora-user-images\image-20230804163455290.png)
 
-### 3.3 事件过滤器
+### 3.3 定时器
+
+#### 1 利用重写时间函数设置定时器
+
+（1）在类的构造函数中调用startTimer()，启动一个定时器，该定时器的参数1为事件间隔，单位为ms
+
+（2）重写timerEvent函数，在该函数中实现将时间显示到控件的功能
+
+（3）startTimer()的返回值为int值，是一个定时器的唯一标志，可以利用该标识来区分不同的定时器
+
+（4）每一个定时器都需要在timerEvent函数中进行操作，新增定时器，又需要修改该函数
+
+#### 2 利用信号槽设置定时器
+
+（1）加入QTimer头文件，在堆区开辟一个指向QTimer类的指针变量，利用指针调用timer函数，启动定时器，利用指针调用stop函数，暂停计时
+
+（2）使用connect连接定时器和槽函数，可利用lambda表达式，直接在connect中实现槽函数
+
+（3）多个定时器直接使用QTimer创建新对象即可，无需获取timerId
+
+### 3.4 事件分发器
+
+通过重写  bool event(QEvent *e);  函数来实现
+
+如果在该函数中对某一事件进行了拦截，则该函数返回值为true，且该事件不再向下分发；未被拦截的事件交由给父类处理（但不建议使用该函数进行拦截操作）
+
+例如：目前event函数中对**鼠标点击事件**进行拦截，则mousePressEvent函数则不再会起作用（相当于该事件对它进行屏蔽了）
+
+### 3.5事件过滤器
 
 包含头文件QEvent
 
@@ -108,11 +136,7 @@ void installEventFilter(QObject * filterObj);
 */
 ```
 
-案例：目前需要实现，对按钮进行鼠标点击操作时，打印出按钮需要过滤鼠标操作，当鼠标对主窗口进行操作时，打印出主窗口需要过滤鼠标操作
-
-（1）父控件是主窗口，因此需要在主窗口类中实现过滤器操作，也就是在主窗口类中重写eventFilter函数
-
-（2）主窗口和按钮都要进行事件过滤操作，因此都需要安装过滤器
+在程序将事件传送到事件分发器之前操作，如果该控件安装了过滤器，且拦截了**鼠标点击事件**，则不会再将事件分发到事件分发器中；对于其他事件，则交由给父对象处理
 
 ## 四、信号与槽
 
